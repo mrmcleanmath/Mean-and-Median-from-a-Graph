@@ -83,3 +83,4 @@ $("#mathModes").onclick=e=>{const b=e.target.closest("button[data-mode]");if(!b)
 $("#topics").onclick=e=>{const b=e.target.closest("button[data-topic]");if(!b)return;state.topic=b.dataset.topic;state.recentKeys=[];$$("[data-topic]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));load()};
 $("#contrastBtn").onclick=()=>{const on=document.body.classList.toggle("high-contrast");$("#contrastBtn").setAttribute("aria-pressed",String(on));if(state.current)$("#graphBox").innerHTML=renderGraph(state.current)};
 load();
+</script></body></html>
