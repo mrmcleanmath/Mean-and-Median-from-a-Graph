@@ -1,550 +1,85 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Mean and Median from a Graph - Mr. McLean Math</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mean and Median from a Graph — Mr. McLean Math</title>
 <style>
-  :root{
-    --bg:#f5f7fb; --card:#ffffff; --text:#1f2937; --muted:#6b7280; --line:#dbe3ee;
-    --primary:#2563eb; --good:#15803d; --bad:#b91c1c; --warn:#b45309;
-    --shadow:0 10px 26px rgba(15,23,42,.08); --btn:#eef3ff; --chip:#f3f4f6; --selected:#dbeafe;
-    --graph:#2563eb; --point:#111827;
-  }
-  body.high-contrast{
-    --bg:#000; --card:#111; --text:#fff; --muted:#d1d5db; --line:#4b5563;
-    --primary:#facc15; --good:#22c55e; --bad:#ef4444; --warn:#f59e0b;
-    --shadow:none; --btn:#1f2937; --chip:#111827; --selected:#374151;
-    --graph:#facc15; --point:#fff;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
-  .wrap{max-width:1100px;margin:0 auto;padding:18px}
-  .topbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .title{font-size:clamp(24px,4vw,36px);font-weight:700}
-  .sub{color:var(--muted);font-size:14px;margin-top:4px}
-  .panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:var(--shadow)}
-  .grid{display:grid;gap:16px}.grid-2{grid-template-columns:1.05fr .95fr}
-  @media(max-width:900px){.grid-2{grid-template-columns:1fr}}
-  h2{margin:0 0 12px 0}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.section{margin-top:14px}
-  .btn{border:1px solid var(--line);background:var(--btn);color:var(--text);padding:12px 16px;border-radius:14px;font-size:16px;cursor:pointer;transition:.15s transform ease}
-  .btn:hover{transform:translateY(-1px)}.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
-  body.high-contrast .btn.primary{color:#000}.btn.secondary{background:var(--card)}
-  .btn.selected{background:var(--selected);border-color:var(--primary);box-shadow:inset 0 0 0 1px var(--primary)}
-  .btn.big{font-size:18px;padding:14px 20px;min-width:150px}.mode-btn{min-width:180px}.topic-btn{min-width:150px}
-  .small{font-size:14px;color:var(--muted)}
-  .stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
-  .stat{flex:1 1 180px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)}
-  .stat-label{color:var(--muted);font-size:13px}.stat-value{font-size:28px;font-weight:700;margin-top:6px}
-  .question-card{min-height:320px}.prompt{font-size:22px;font-weight:700;margin-bottom:10px}
-  .scenario{font-size:20px;line-height:1.55;background:var(--chip);border:1px solid var(--line);border-radius:18px;padding:16px;margin:14px 0}
-  .notice{display:inline-block;margin-top:8px;padding:9px 12px;border-radius:12px;border:1px solid var(--warn);background:var(--chip);color:var(--warn);font-weight:700}
-  .input-wrap{margin-top:14px}
-  input[type="text"]{width:100%;max-width:340px;font-size:22px;padding:14px 16px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--text);outline:none}
-  input[type="text"]:focus{border-color:var(--primary)}
-  .graph-wrap{width:100%;overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;margin:14px 0}
-  .graph-svg{display:block;width:100%;min-width:620px;height:430px}
-  .axis-label{font-size:16px;font-weight:700;fill:var(--text)}
-  .tick-label{font-size:14px;fill:var(--text)}
-  .graph-title{font-size:18px;font-weight:800;fill:var(--text)}
-  .grid-line{stroke:var(--line);stroke-width:1}
-  .axis-line{stroke:var(--text);stroke-width:2}
-  .bar{fill:var(--graph);opacity:.85}
-  .bar:hover{opacity:1}
-  .line-graph{stroke:var(--graph);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
-  .point{fill:var(--point);stroke:var(--card);stroke-width:3}
-  .feedback{margin-top:18px;padding:16px;border-radius:18px;border:1px solid var(--line);background:var(--card)}
-  .feedback.correct{border-color:var(--good);background:rgba(21,128,61,.08)}.feedback.incorrect{border-color:var(--bad);background:rgba(185,28,28,.08)}
-  body.high-contrast .feedback.correct{background:#08220f}body.high-contrast .feedback.incorrect{background:#2a0b0b}
-  .feedback-title{font-size:34px;font-weight:800;margin-bottom:8px}.feedback.correct .feedback-title{color:var(--good)}.feedback.incorrect .feedback-title{color:var(--bad)}
-  .answer-line{font-size:20px;font-weight:700;margin-bottom:8px}.explain{font-size:18px;line-height:1.5}
-  .hidden{display:none!important}.worksheet-output{white-space:pre-wrap;line-height:1.65;font-size:18px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;min-height:180px}
-  .footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}#homeView{max-width:560px}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="topbar">
-    <div><div class="title">Mean and Median from a Graph</div><div class="sub">Created by Mr. McLean Math</div></div>
-  </div>
-
-  <div id="homeView">
-    <div class="panel">
-      <h2>Set up your practice</h2>
-      <div class="section"><div class="small">Choose mode</div><div class="row" id="modeButtons"><button class="btn big mode-btn" data-mode="regular">Regular Mode</button><button class="btn big mode-btn" data-mode="advanced">Advanced Mode</button></div></div>
-      <div class="section"><div class="small">Choose what to practice</div><div class="row" id="topicButtons"><button class="btn big topic-btn" data-topic="mean">Mean</button><button class="btn big topic-btn" data-topic="median">Median</button></div></div>
-      <div class="section"><div class="small">Timer</div><div class="row" id="timerButtons"><button class="btn" data-timer="0">Off</button><button class="btn" data-timer="30">30 s</button><button class="btn" data-timer="60">60 s</button><button class="btn" data-timer="90">90 s</button><button class="btn" data-timer="120">120 s</button></div></div>
-      <div class="section"><div class="small">Options</div><div class="row"><button class="btn" id="soundToggle">Sound: On</button><button class="btn" id="contrastToggle">High Contrast: Off</button></div></div>
-      <div class="section"><button class="btn primary big" id="startGameBtn">Start Game</button></div>
-    </div>
-  </div>
-
-  <div id="gameView" class="hidden">
-    <div class="stats">
-      <div class="stat"><div class="stat-label">Mode</div><div class="stat-value" id="statMode">-</div></div>
-      <div class="stat"><div class="stat-label">Topic</div><div class="stat-value" id="statTopic">-</div></div>
-      <div class="stat"><div class="stat-label">Score</div><div class="stat-value" id="statScore">0</div></div>
-      <div class="stat"><div class="stat-label">Answered</div><div class="stat-value" id="statAnswered">0</div></div>
-      <div class="stat"><div class="stat-label">Time Left</div><div class="stat-value" id="statTimer">Off</div></div>
-    </div>
-
-    <div class="panel question-card">
-      <div class="row" style="justify-content:space-between;align-items:flex-start;">
-        <div><div class="small" id="questionLabel">Question</div><div class="prompt" id="promptText">-</div></div>
-        <button class="btn secondary" id="backHomeBtn">Home</button>
-      </div>
-      <div class="scenario" id="scenarioBox">Use the graph below.</div>
-      <div class="graph-wrap" id="graphBox"></div>
-      <div id="calculatorNotice" class="notice hidden">Calculator allowed</div>
-      <div class="input-wrap"><input type="text" id="answerInput" inputmode="decimal" autocomplete="off" placeholder="Enter your answer"></div>
-      <div class="section row"><button class="btn primary" id="submitBtn">Submit Answer</button><button class="btn secondary hidden" id="nextBtn">Next Question</button></div>
-      <div id="feedbackArea"></div>
-    </div>
-  </div>
-
-  <div class="footer">Non-auto-advance is built in. After each answer, click Next Question to continue.</div>
-</div>
-
+:root{--bg:#f5f6f8;--panel:#fff;--text:#202124;--muted:#666b73;--border:#d9dde3;--accent:#1976d2;--soft:#e8f1fb;--good:#247a3b;--bad:#b3261e;--focus:#f5b400;--graph:#1976d2;--point:#202124}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45}
+body.high-contrast{--bg:#000;--panel:#090909;--text:#fff;--muted:#ddd;--border:#777;--accent:#00d7ff;--soft:#111;--good:#68ff8b;--bad:#ff7474;--focus:#ffea00;--graph:#00d7ff;--point:#fff}
+.app{max-width:980px;margin:auto;padding:18px}header,.toolbar,.controls,.group,.answer-row,.stats{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+header,.toolbar{justify-content:space-between;margin-bottom:14px}h1{margin:0;font-size:clamp(28px,5vw,36px)}.controls{gap:12px}
+button,input{font:inherit}button{border:1px solid var(--border);border-radius:10px;background:var(--panel);color:var(--text);padding:9px 13px;cursor:pointer;font-weight:650}
+button:hover{border-color:var(--accent)}button:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+button[aria-pressed=true],button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:18px;display:grid;gap:15px}
+.prompt{font-size:clamp(21px,4vw,28px);font-weight:800}.graph-wrap{width:100%;overflow-x:auto;border:1px solid var(--border);border-radius:14px;padding:10px}
+.graph-svg{display:block;width:100%;min-width:620px;height:430px}.axis-label{font-size:16px;font-weight:700;fill:var(--text)}.tick-label{font-size:14px;fill:var(--text)}
+.graph-title{font-size:18px;font-weight:800;fill:var(--text)}.grid-line{stroke:var(--border)}.axis-line{stroke:var(--text);stroke-width:2}.bar{fill:var(--graph);opacity:.88}
+.line-graph{stroke:var(--graph);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}.point{fill:var(--point);stroke:var(--panel);stroke-width:3}
+.notice{text-align:center;color:var(--muted);font-weight:650}.answer-row{justify-content:center}.answer-row input{width:min(300px,100%);font-size:21px;text-align:center;padding:10px;border:1px solid var(--border);border-radius:9px;background:var(--panel);color:var(--text)}
+.feedback{min-height:28px;text-align:center;font-size:18px;font-weight:700}.correct{color:var(--good)}.incorrect{color:var(--bad)}.warn{color:var(--muted)}
+.explain{max-width:760px;width:100%;margin:auto;background:var(--soft);border:1px solid var(--border);border-radius:11px;padding:11px 13px;white-space:pre-line}
+.stats{justify-content:center;gap:20px;color:var(--muted);font-size:15px}footer{text-align:center;color:var(--muted);font-size:14px;margin-top:18px}
+@media(max-width:620px){.app{padding:13px}.panel{padding:14px}.answer-row{align-items:stretch}.answer-row input,.answer-row button{width:100%}}
+</style></head><body>
+<div class="app">
+<header><h1>Mean and Median from a Graph</h1><button id="contrastBtn" aria-pressed="false">High contrast</button></header>
+<div class="toolbar"><div class="controls">
+<div class="group" id="mathModes"><button data-mode="regular" aria-pressed="true">Regular</button><button data-mode="advanced" aria-pressed="false">Advanced</button></div>
+<div class="group" id="topics"><button data-topic="mean" aria-pressed="true">Mean</button><button data-topic="median" aria-pressed="false">Median</button></div>
+</div></div>
+<main class="panel">
+<div id="prompt" class="prompt"></div><div id="graphBox" class="graph-wrap"></div><div id="calculatorNotice" class="notice" hidden>Calculator allowed</div>
+<div class="answer-row"><input id="answer" type="text" inputmode="decimal" autocomplete="off" placeholder="Enter your answer"><button id="check" class="primary">Check</button><button id="next" hidden>Next</button></div>
+<div id="feedback" class="feedback" aria-live="polite"></div><button id="showSteps" hidden style="justify-self:center">Show steps</button><div id="steps" class="explain" hidden></div>
+<div class="stats"><span>Correct: <strong id="correctCount">0</strong></span><span>Incorrect: <strong id="incorrectCount">0</strong></span></div>
+</main><footer>Created by Mr. McLean Math</footer></div>
 <script>
-(function(){
-  "use strict";
-
-  const state = {
-    mode:"regular", topic:null, timerSeconds:0, soundOn:true, highContrast:false,
-    score:0, answered:0, currentQuestion:null, feedbackShown:false,
-    recentKeys:[], countdownRemaining:0, countdownHandle:null
-  };
-
-  const el = {};
-  [
-    "homeView","gameView","modeButtons","topicButtons","timerButtons",
-    "soundToggle","contrastToggle","startGameBtn","statMode","statTopic","statScore","statAnswered","statTimer",
-    "questionLabel","promptText","scenarioBox","graphBox","calculatorNotice","answerInput","submitBtn","nextBtn",
-    "feedbackArea","backHomeBtn"
-  ].forEach(id => el[id] = document.getElementById(id));
-
-  function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
-  function randInt(min,max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
-  function choose(arr){ return arr[randInt(0, arr.length - 1)]; }
-  function parseNumberInput(raw){
-    if(raw == null) return null;
-    let s = String(raw).trim().replace(/\s+/g,"").replace(",",".");
-    if(!s || !/^[-+]?\d+(\.\d+)?$/.test(s)) return null;
-    return Number(s);
-  }
-  function isSameNumber(a,b){ return Math.abs(a-b) < 1e-9; }
-  function numberDisplay(n){
-    if(Number.isInteger(n)) return String(n);
-    if(Math.abs(n * 2 - Math.round(n * 2)) < 1e-9) return String(Math.round(n * 2) / 2);
-    return String(Math.round(n * 100) / 100);
-  }
-
-  function rowsKey(rows){
-    return rows.map(r => r.term + "x" + r.frequency).join("|");
-  }
-
-  function expandedValues(rows){
-    const values = [];
-    rows.forEach(r => {
-      for(let i=0;i<r.frequency;i++) values.push(r.term);
-    });
-    return values;
-  }
-
-  function calcMeanFromRows(rows){
-    const total = rows.reduce((s,r)=>s + r.frequency,0);
-    const weighted = rows.reduce((s,r)=>s + r.term * r.frequency,0);
-    return weighted / total;
-  }
-
-  function calcMedianFromRows(rows){
-    const values = expandedValues(rows).sort((a,b)=>a-b);
-    const n = values.length;
-    return n % 2 ? values[(n-1)/2] : (values[n/2 - 1] + values[n/2]) / 2;
-  }
-
-  function totalFrequency(rows){ return rows.reduce((s,r)=>s + r.frequency,0); }
-  function weightedSum(rows){ return rows.reduce((s,r)=>s + r.term * r.frequency,0); }
-
-  function hasVariedFrequencies(rows){
-    const freqs = rows.map(r => r.frequency);
-    return new Set(freqs).size >= 3 && freqs.some(f => f > 1);
-  }
-
-  function isAllowedMean(rows, mode){
-    const mean = calcMeanFromRows(rows);
-    if(mode === "regular") return Number.isInteger(mean);
-    return Number.isInteger(mean) || Math.abs(mean * 2 - Math.round(mean * 2)) < 1e-9;
-  }
-
-  function generateTerms(rowCount, mode){
-    const min = mode === "regular" ? 1 : 2;
-    const max = mode === "regular" ? 12 : 25;
-    const stepChoices = mode === "regular" ? [1,1,1,2] : [1,1,2,2,3];
-    let start = randInt(min, max - rowCount - 2);
-    const terms = [start];
-
-    while(terms.length < rowCount){
-      const next = terms[terms.length - 1] + choose(stepChoices);
-      if(next > max) return generateTerms(rowCount, mode);
-      terms.push(next);
-    }
-    return terms;
-  }
-
-  function generateRows(mode){
-    const rowCount = mode === "regular" ? randInt(4,6) : randInt(5,7);
-    const terms = generateTerms(rowCount, mode);
-    const maxF = mode === "regular" ? 4 : 6;
-    return terms.map(term => ({term, frequency:randInt(1,maxF)}));
-  }
-
-  function medianIsClean(rows, mode){
-    const med = calcMedianFromRows(rows);
-    if(mode === "regular") return Number.isInteger(med);
-    return Number.isInteger(med) || Math.abs(med * 2 - Math.round(med * 2)) < 1e-9;
-  }
-
-  function buildQuestion(topic, mode, usedKeys){
-    for(let attempt=0; attempt<2500; attempt++){
-      const rows = generateRows(mode);
-      const graphType = mode === "regular" ? "bar" : choose(["bar","barline"]);
-      const key = mode + "::" + topic + "::" + graphType + "::" + rowsKey(rows);
-
-      if(usedKeys && usedKeys.has(key)) continue;
-      if(!hasVariedFrequencies(rows)) continue;
-
-      const total = totalFrequency(rows);
-      if(mode === "regular" && (total < 8 || total > 18)) continue;
-      if(mode === "advanced" && (total < 14 || total > 30)) continue;
-
-      if(topic === "mean" && !isAllowedMean(rows, mode)) continue;
-      if(topic === "median" && !medianIsClean(rows, mode)) continue;
-
-      const answer = topic === "mean" ? calcMeanFromRows(rows) : calcMedianFromRows(rows);
-
-      if(topic === "mean"){
-        if(mode === "regular" && (answer < 2 || answer > 11)) continue;
-        if(mode === "advanced" && (answer < 4 || answer > 23)) continue;
-      }
-
-      if(usedKeys) usedKeys.add(key);
-
-      return {
-        topic, mode, rows, graphType, answer,
-        calculatorAllowed: topic === "mean" && mode === "advanced",
-        key
-      };
-    }
-
-    const fallback = mode === "regular"
-      ? [{term:2,frequency:3},{term:4,frequency:1},{term:6,frequency:2},{term:8,frequency:4}]
-      : [{term:5,frequency:2},{term:8,frequency:5},{term:11,frequency:3},{term:14,frequency:4},{term:17,frequency:2}];
-
-    return {
-      topic, mode, rows:fallback, graphType:"bar",
-      answer: topic === "mean" ? calcMeanFromRows(fallback) : calcMedianFromRows(fallback),
-      calculatorAllowed: topic === "mean" && mode === "advanced",
-      key: mode + "::" + topic + "::fallback::" + Math.random()
-    };
-  }
-
-  function niceYAxisMax(maxFreq){
-    if(maxFreq <= 4) return 4;
-    if(maxFreq <= 6) return 6;
-    if(maxFreq <= 8) return 8;
-    return Math.ceil(maxFreq / 2) * 2;
-  }
-
-  function renderGraph(q){
-    const rows = q.rows;
-    const w = 760, h = 430;
-    const left = 72, right = 28, top = 54, bottom = 70;
-    const chartW = w - left - right;
-    const chartH = h - top - bottom;
-    const yMax = niceYAxisMax(Math.max(...rows.map(r => r.frequency)));
-    const step = yMax <= 6 ? 1 : 2;
-    const slot = chartW / rows.length;
-    const barW = Math.min(54, slot * 0.55);
-
-    function xCenter(i){ return left + slot * i + slot / 2; }
-    function yVal(v){ return top + chartH - (v / yMax) * chartH; }
-
-    let svg = `<svg class="graph-svg" viewBox="0 0 ${w} ${h}" role="img" aria-label="Frequency graph">`;
-    svg += `<text class="graph-title" x="${w/2}" y="28" text-anchor="middle">${q.graphType === "barline" ? "Bar-line graph" : "Bar graph"}</text>`;
-
-    for(let y=0; y<=yMax; y+=step){
-      const py = yVal(y);
-      svg += `<line class="grid-line" x1="${left}" y1="${py}" x2="${w-right}" y2="${py}"></line>`;
-      svg += `<text class="tick-label" x="${left-14}" y="${py+5}" text-anchor="end">${y}</text>`;
-    }
-
-    svg += `<line class="axis-line" x1="${left}" y1="${top}" x2="${left}" y2="${top+chartH}"></line>`;
-    svg += `<line class="axis-line" x1="${left}" y1="${top+chartH}" x2="${w-right}" y2="${top+chartH}"></line>`;
-    svg += `<text class="axis-label" x="${w/2}" y="${h-22}" text-anchor="middle">Term</text>`;
-    svg += `<text class="axis-label" transform="translate(22 ${top+chartH/2}) rotate(-90)" text-anchor="middle">Frequency</text>`;
-
-    if(q.graphType === "bar"){
-      rows.forEach((r,i) => {
-        const xc = xCenter(i);
-        const y = yVal(r.frequency);
-        const bh = top + chartH - y;
-        svg += `<rect class="bar" x="${xc-barW/2}" y="${y}" width="${barW}" height="${bh}" rx="6"></rect>`;
-        svg += `<text class="tick-label" x="${xc}" y="${top+chartH+28}" text-anchor="middle">${r.term}</text>`;
-      });
-    } else {
-      const points = rows.map((r,i) => `${xCenter(i)},${yVal(r.frequency)}`).join(" ");
-      svg += `<polyline class="line-graph" points="${points}"></polyline>`;
-      rows.forEach((r,i) => {
-        const xc = xCenter(i);
-        const y = yVal(r.frequency);
-        svg += `<circle class="point" cx="${xc}" cy="${y}" r="8"></circle>`;
-        svg += `<line class="grid-line" x1="${xc}" y1="${y}" x2="${xc}" y2="${top+chartH}"></line>`;
-        svg += `<text class="tick-label" x="${xc}" y="${top+chartH+28}" text-anchor="middle">${r.term}</text>`;
-      });
-    }
-
-    svg += `</svg>`;
-    return svg;
-  }
-
-  function graphDataText(rows){
-    const lines = ["Term | Frequency"];
-    rows.forEach(r => lines.push(`${r.term} | ${r.frequency}`));
-    return lines.join("\n");
-  }
-
-  function setSelectedWithin(container, selector, predicate){
-    container.querySelectorAll(selector).forEach(btn => btn.classList.toggle("selected", predicate(btn)));
-  }
-
-  function refreshHomeSelections(){
-    setSelectedWithin(el.modeButtons,"button",btn => btn.dataset.mode === state.mode);
-    setSelectedWithin(el.topicButtons,"button",btn => btn.dataset.topic === state.topic);
-    setSelectedWithin(el.timerButtons,"button",btn => Number(btn.dataset.timer) === state.timerSeconds);
-  }
-
-  function showView(name){
-    el.homeView.classList.toggle("hidden", name !== "home");
-    el.gameView.classList.toggle("hidden", name !== "game");
-  }
-
-  function updateStats(){
-    el.statMode.textContent = state.mode ? cap(state.mode) : "-";
-    el.statTopic.textContent = state.topic ? cap(state.topic) : "-";
-    el.statScore.textContent = String(state.score);
-    el.statAnswered.textContent = String(state.answered);
-    el.statTimer.textContent = state.timerSeconds > 0 ? state.countdownRemaining + " s" : "Off";
-  }
-
-  function getPromptText(topic){
-    if(topic === "mean") return "Calculate the mean from the graph.";
-    if(topic === "median") return "Calculate the median from the graph.";
-    return "";
-  }
-
-  function nextGeneratedQuestion(mode, topic){
-    const recent = new Set(state.recentKeys);
-    const q = buildQuestion(topic, mode, recent);
-    state.recentKeys.push(q.key);
-    if(state.recentKeys.length > 50) state.recentKeys.shift();
-    return q;
-  }
-
-  function renderQuestion(){
-    state.currentQuestion = nextGeneratedQuestion(state.mode,state.topic);
-    state.feedbackShown = false;
-    el.feedbackArea.innerHTML = "";
-    el.nextBtn.classList.add("hidden");
-    el.submitBtn.disabled = false;
-    el.answerInput.disabled = false;
-    el.answerInput.value = "";
-
-    const q = state.currentQuestion;
-    el.questionLabel.textContent = "Question";
-    el.promptText.textContent = getPromptText(q.topic);
-    el.scenarioBox.textContent = "Use the graph below.";
-    el.graphBox.innerHTML = renderGraph(q);
-    el.calculatorNotice.classList.toggle("hidden", !q.calculatorAllowed);
-
-    setTimeout(() => el.answerInput.focus(),30);
-  }
-
-  function explainQuestion(q){
-    if(q.topic === "mean"){
-      const total = totalFrequency(q.rows);
-      const weighted = weightedSum(q.rows);
-      const parts = q.rows.map(r => `${r.term} x ${r.frequency}`).join(" + ");
-      return `Read each term and frequency from the graph. Multiply each term by its frequency: ${parts} = ${weighted}. The total frequency is ${total}. ${weighted} divided by ${total} = ${numberDisplay(q.answer)}.`;
-    }
-
-    const values = expandedValues(q.rows).sort((a,b)=>a-b);
-    const total = values.length;
-
-    if(total % 2 === 1){
-      const position = (total + 1) / 2;
-      return `Read the frequencies from the graph. The total frequency is ${total}, so the median is in position ${position}. Expanded in order: ${values.join(", ")}. The median is ${numberDisplay(q.answer)}.`;
-    }
-
-    const left = total / 2;
-    const right = left + 1;
-    const a = values[left - 1];
-    const b = values[right - 1];
-    return `Read the frequencies from the graph. The total frequency is ${total}, so the median is between positions ${left} and ${right}. Expanded in order: ${values.join(", ")}. The two middle values are ${a} and ${b}, so the median is ${numberDisplay(q.answer)}.`;
-  }
-
-  function showInlineMessage(text){
-    el.feedbackArea.innerHTML = `<div class="feedback incorrect"><div class="feedback-title">Check</div><div class="answer-line">${text}</div></div>`;
-  }
-
-  function submitAnswer(manualTimeout=false){
-    if(state.feedbackShown) return;
-    const q = state.currentQuestion;
-    const value = manualTimeout ? null : parseNumberInput(el.answerInput.value);
-
-    if(value === null && !manualTimeout){
-      showInlineMessage("Please enter a valid number before submitting.");
-      return;
-    }
-
-    const correct = value !== null && isSameNumber(value,q.answer);
-    const userText = value !== null ? numberDisplay(value) : "No answer";
-
-    state.feedbackShown = true;
-    state.answered += 1;
-    if(correct) state.score += 1;
-    updateStats();
-    playResult(correct);
-
-    el.submitBtn.disabled = true;
-    el.answerInput.disabled = true;
-    el.nextBtn.classList.remove("hidden");
-
-    const title = manualTimeout ? "Time's up" : (correct ? "Correct!" : "Incorrect");
-    const cls = correct ? "correct" : "incorrect";
-
-    el.feedbackArea.innerHTML = `
-      <div class="feedback ${cls}">
-        <div class="feedback-title">${title}</div>
-        <div class="answer-line">Correct answer: ${numberDisplay(q.answer)}</div>
-        <div class="explain">${explainQuestion(q)}</div>
-        <div class="small" style="margin-top:10px;">Your answer: ${userText}</div>
-      </div>
-    `;
-  }
-
-  function startGame(){
-    if(!state.mode) state.mode = "regular";
-    if(!state.topic){ alert("Please choose what to practice."); return; }
-
-    state.score = 0;
-    state.answered = 0;
-    updateStats();
-    showView("game");
-    renderQuestion();
-    startTimerIfNeeded();
-  }
-
-  function resetTimer(){
-    if(state.countdownHandle){ clearInterval(state.countdownHandle); state.countdownHandle = null; }
-    state.countdownRemaining = state.timerSeconds;
-    updateStats();
-  }
-
-  function startTimerIfNeeded(){
-    resetTimer();
-    if(state.timerSeconds <= 0) return;
-    state.countdownHandle = setInterval(() => {
-      state.countdownRemaining -= 1;
-      updateStats();
-      if(state.countdownRemaining <= 0){
-        clearInterval(state.countdownHandle);
-        state.countdownHandle = null;
-        if(!state.feedbackShown) submitAnswer(true);
-      }
-    },1000);
-  }
-
-  function nextQuestion(){ renderQuestion(); startTimerIfNeeded(); }
-
-  let audioCtx = null;
-  function getAudioCtx(){
-    if(!audioCtx){
-      try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-      catch(e){ audioCtx = null; }
-    }
-    return audioCtx;
-  }
-
-  function beep(freq,duration,type="sine",gainValue=.03){
-    if(!state.soundOn) return;
-    const ctx = getAudioCtx();
-    if(!ctx) return;
-    const osc = ctx.createOscillator(), gain = ctx.createGain();
-    osc.type = type; osc.frequency.value = freq; gain.gain.value = gainValue;
-    osc.connect(gain); gain.connect(ctx.destination);
-    const now = ctx.currentTime;
-    gain.gain.setValueAtTime(gainValue,now);
-    gain.gain.exponentialRampToValueAtTime(.0001, now + duration / 1000);
-    osc.start(now); osc.stop(now + duration / 1000);
-  }
-
-  function playClick(){ beep(500,60,"square",.02); }
-  function playResult(correct){
-    if(correct){ beep(660,90,"triangle",.03); setTimeout(()=>beep(880,110,"triangle",.03),80); }
-    else { beep(220,120,"sawtooth",.025); setTimeout(()=>beep(180,160,"sawtooth",.02),80); }
-  }
-
-  el.modeButtons.addEventListener("click", e => {
-    const btn = e.target.closest("button[data-mode]"); if(!btn) return;
-    state.mode = btn.dataset.mode;
-    refreshHomeSelections(); playClick();
-  });
-
-  el.topicButtons.addEventListener("click", e => {
-    const btn = e.target.closest("button[data-topic]"); if(!btn) return;
-    state.topic = btn.dataset.topic;
-    refreshHomeSelections(); playClick();
-  });
-
-  el.timerButtons.addEventListener("click", e => {
-    const btn = e.target.closest("button[data-timer]"); if(!btn) return;
-    state.timerSeconds = Number(btn.dataset.timer);
-    refreshHomeSelections(); playClick();
-  });
-
-  el.soundToggle.addEventListener("click", () => {
-    state.soundOn = !state.soundOn;
-    el.soundToggle.textContent = `Sound: ${state.soundOn ? "On" : "Off"}`;
-    playClick();
-  });
-
-  el.contrastToggle.addEventListener("click", () => {
-    state.highContrast = !state.highContrast;
-    document.body.classList.toggle("high-contrast", state.highContrast);
-    el.contrastToggle.textContent = `High Contrast: ${state.highContrast ? "On" : "Off"}`;
-    playClick();
-  });
-
-  el.startGameBtn.addEventListener("click", startGame);
-  el.submitBtn.addEventListener("click", () => submitAnswer(false));
-  el.nextBtn.addEventListener("click", nextQuestion);
-
-  el.answerInput.addEventListener("keydown", e => {
-    if(e.key === "Enter" && !state.feedbackShown) submitAnswer(false);
-    else if(e.key === "Enter" && state.feedbackShown) nextQuestion();
-  });
-
-  el.backHomeBtn.addEventListener("click", () => {
-    if(state.countdownHandle){ clearInterval(state.countdownHandle); state.countdownHandle = null; }
-    showView("home");
-  });
-
-
-  refreshHomeSelections();
-  updateStats();
-  showView("home");
-})();
-</script>
-</body>
-</html>
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const state={mode:"regular",topic:"mean",current:null,evaluated:false,correct:0,incorrect:0,recentKeys:[]};
+function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a} function choose(a){return a[randInt(0,a.length-1)]}
+function rowsKey(r){return r.map(x=>x.term+"x"+x.frequency).join("|")}
+function strictNumber(raw){if(raw==null)return null;let s=String(raw).trim().replace(/\s+/g,"");if(!s)return null;if(s.includes(".")&&s.includes(","))return null;if(s.includes(","))s=s.replace(",",".");if(!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(s))return null;const n=Number(s);return Number.isFinite(n)?n:null}
+function numberDisplay(n){if(Number.isInteger(n))return String(n);if(Math.abs(n*2-Math.round(n*2))<1e-9)return String(Math.round(n*2)/2);return String(Math.round(n*100)/100)}
+function expandedValues(rows){const v=[];rows.forEach(r=>{for(let i=0;i<r.frequency;i++)v.push(r.term)});return v}
+const totalFrequency=r=>r.reduce((s,x)=>s+x.frequency,0), weightedSum=r=>r.reduce((s,x)=>s+x.term*x.frequency,0);
+const calcMeanFromRows=r=>weightedSum(r)/totalFrequency(r);
+function calcMedianFromRows(r){const v=expandedValues(r).sort((a,b)=>a-b),n=v.length;return n%2?v[(n-1)/2]:(v[n/2-1]+v[n/2])/2}
+function hasVariedFrequencies(r){const f=r.map(x=>x.frequency);return new Set(f).size>=3&&f.some(x=>x>1)}
+function isClean(v,m){return m==="regular"?Number.isInteger(v):Number.isInteger(v)||Math.abs(v*2-Math.round(v*2))<1e-9}
+function generateTerms(n,m){const min=m==="regular"?1:2,max=m==="regular"?12:25,steps=m==="regular"?[1,1,1,2]:[1,1,2,2,3];const start=randInt(min,max-n-2),t=[start];while(t.length<n){const x=t[t.length-1]+choose(steps);if(x>max)return generateTerms(n,m);t.push(x)}return t}
+function generateRows(m){const n=m==="regular"?randInt(4,6):randInt(5,7),t=generateTerms(n,m),maxF=m==="regular"?4:6;return t.map(term=>({term,frequency:randInt(1,maxF)}))}
+const FALLBACKS={
+regular:{mean:[{term:2,frequency:1},{term:4,frequency:2},{term:6,frequency:3},{term:8,frequency:2}],median:[{term:2,frequency:2},{term:4,frequency:3},{term:6,frequency:3},{term:8,frequency:2}]},
+advanced:{mean:[{term:5,frequency:2},{term:8,frequency:2},{term:11,frequency:2},{term:14,frequency:2},{term:17,frequency:2}],median:[{term:5,frequency:2},{term:8,frequency:3},{term:11,frequency:4},{term:14,frequency:3},{term:17,frequency:2}]}
+};
+function buildQuestion(topic,mode,used){
+ for(let a=0;a<2500;a++){const rows=generateRows(mode),graphType=mode==="regular"?"bar":choose(["bar","barline"]),key=mode+"::"+topic+"::"+graphType+"::"+rowsKey(rows);if(used&&used.has(key))continue;if(!hasVariedFrequencies(rows))continue;
+ const total=totalFrequency(rows);if(mode==="regular"&&(total<8||total>18))continue;if(mode==="advanced"&&(total<14||total>30))continue;
+ const ans=topic==="mean"?calcMeanFromRows(rows):calcMedianFromRows(rows);if(!isClean(ans,mode))continue;if(topic==="mean"&&((mode==="regular"&&(ans<2||ans>11))||(mode==="advanced"&&(ans<4||ans>23))))continue;
+ if(used)used.add(key);return {topic,mode,rows,graphType,answer:ans,calculatorAllowed:topic==="mean"&&mode==="advanced",key}}
+ const rows=FALLBACKS[mode][topic].map(x=>({...x}));return {topic,mode,rows,graphType:"bar",answer:topic==="mean"?calcMeanFromRows(rows):calcMedianFromRows(rows),calculatorAllowed:topic==="mean"&&mode==="advanced",key:mode+"::"+topic+"::fallback"}
+}
+function nextQuestion(){const q=buildQuestion(state.topic,state.mode,new Set(state.recentKeys));state.recentKeys.push(q.key);if(state.recentKeys.length>50)state.recentKeys.shift();return q}
+function niceYAxisMax(m){if(m<=4)return 4;if(m<=6)return 6;if(m<=8)return 8;return Math.ceil(m/2)*2}
+function renderGraph(q){
+ const r=q.rows,w=760,h=430,left=72,right=28,top=54,bottom=70,cw=w-left-right,ch=h-top-bottom,yMax=niceYAxisMax(Math.max(...r.map(x=>x.frequency))),step=yMax<=6?1:2,slot=cw/r.length,bw=Math.min(54,slot*.55);
+ const xc=i=>left+slot*i+slot/2,yv=v=>top+ch-(v/yMax)*ch;let s=`<svg class="graph-svg" viewBox="0 0 ${w} ${h}" role="img" aria-label="Frequency graph"><text class="graph-title" x="${w/2}" y="28" text-anchor="middle">${q.graphType==="barline"?"Bar-line graph":"Bar graph"}</text>`;
+ for(let y=0;y<=yMax;y+=step){const py=yv(y);s+=`<line class="grid-line" x1="${left}" y1="${py}" x2="${w-right}" y2="${py}"></line><text class="tick-label" x="${left-14}" y="${py+5}" text-anchor="end">${y}</text>`}
+ s+=`<line class="axis-line" x1="${left}" y1="${top}" x2="${left}" y2="${top+ch}"></line><line class="axis-line" x1="${left}" y1="${top+ch}" x2="${w-right}" y2="${top+ch}"></line><text class="axis-label" x="${w/2}" y="${h-22}" text-anchor="middle">Term</text><text class="axis-label" transform="translate(22 ${top+ch/2}) rotate(-90)" text-anchor="middle">Frequency</text>`;
+ if(q.graphType==="bar"){r.forEach((x,i)=>{const X=xc(i),Y=yv(x.frequency);s+=`<rect class="bar" x="${X-bw/2}" y="${Y}" width="${bw}" height="${top+ch-Y}" rx="6"></rect><text class="tick-label" x="${X}" y="${top+ch+28}" text-anchor="middle">${x.term}</text>`})}
+ else{const pts=r.map((x,i)=>`${xc(i)},${yv(x.frequency)}`).join(" ");s+=`<polyline class="line-graph" points="${pts}"></polyline>`;r.forEach((x,i)=>{const X=xc(i),Y=yv(x.frequency);s+=`<circle class="point" cx="${X}" cy="${Y}" r="8"></circle><line class="grid-line" x1="${X}" y1="${Y}" x2="${X}" y2="${top+ch}"></line><text class="tick-label" x="${X}" y="${top+ch+28}" text-anchor="middle">${x.term}</text>`})}
+ return s+"</svg>"
+}
+function explain(q){
+ if(q.topic==="mean"){const t=totalFrequency(q.rows),w=weightedSum(q.rows),p=q.rows.map(r=>`${r.term} × ${r.frequency}`).join(" + ");return `Read each term and frequency from the graph.\n\n${p} = ${w}\nTotal frequency = ${t}\n${w} ÷ ${t} = ${numberDisplay(q.answer)}`}
+ const v=expandedValues(q.rows).sort((a,b)=>a-b),n=v.length;if(n%2){const pos=(n+1)/2;return `Total frequency = ${n}\nMedian position = ${pos}\n\nExpanded in order:\n${v.join(", ")}\n\nMedian = ${numberDisplay(q.answer)}`}
+ const l=n/2,r=l+1,a=v[l-1],b=v[r-1];return `Total frequency = ${n}\nMiddle positions = ${l} and ${r}\n\nExpanded in order:\n${v.join(", ")}\n\nMiddle values: ${a} and ${b}\nMedian = ${numberDisplay(q.answer)}`
+}
+function load(){state.current=nextQuestion();state.evaluated=false;$("#prompt").textContent=state.topic==="mean"?"Calculate the mean from the graph.":"Calculate the median from the graph.";$("#graphBox").innerHTML=renderGraph(state.current);$("#calculatorNotice").hidden=!state.current.calculatorAllowed;$("#answer").value="";$("#answer").disabled=false;$("#check").disabled=false;$("#next").hidden=true;$("#feedback").textContent="";$("#feedback").className="feedback";$("#showSteps").hidden=true;$("#steps").hidden=true;$("#steps").textContent="";$("#answer").focus()}
+function check(){if(state.evaluated)return;const v=strictNumber($("#answer").value);if(v===null){$("#feedback").textContent="Enter a valid number first.";$("#feedback").className="feedback warn";return}state.evaluated=true;$("#answer").disabled=true;$("#check").disabled=true;$("#next").hidden=false;if(Math.abs(v-state.current.answer)<1e-9){state.correct++;$("#feedback").textContent="Correct!";$("#feedback").className="feedback correct"}else{state.incorrect++;$("#feedback").textContent=`Incorrect. Correct answer: ${numberDisplay(state.current.answer)}`;$("#feedback").className="feedback incorrect";$("#showSteps").hidden=false}$("#correctCount").textContent=state.correct;$("#incorrectCount").textContent=state.incorrect}
+$("#check").onclick=check;$("#next").onclick=load;$("#showSteps").onclick=()=>{$("#steps").textContent=explain(state.current);$("#steps").hidden=false;$("#showSteps").hidden=true};
+$("#answer").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();state.evaluated?load():check()}else if(e.key==="Escape"&&!state.evaluated)$("#answer").value=""});
+$("#mathModes").onclick=e=>{const b=e.target.closest("button[data-mode]");if(!b)return;state.mode=b.dataset.mode;state.recentKeys=[];$$("[data-mode]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));load()};
+$("#topics").onclick=e=>{const b=e.target.closest("button[data-topic]");if(!b)return;state.topic=b.dataset.topic;state.recentKeys=[];$$("[data-topic]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));load()};
+$("#contrastBtn").onclick=()=>{const on=document.body.classList.toggle("high-contrast");$("#contrastBtn").setAttribute("aria-pressed",String(on));if(state.current)$("#graphBox").innerHTML=renderGraph(state.current)};
+load();
